@@ -1,47 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Header from "@/components/Header";
+import EventList from "@/components/EventList"; // Importar el nuevo componente
+import events from "@/data/events.json"; // Importar los datos desde el archivo JSON
 
-export default function Page() {
+export default function App() {
   const images = [
     "https://placehold.co/1920x450",
     "https://impact.economist.com/perspectives/sites/default/files/visa-hero-image-1920x450.jpg",
     "https://bishopsmove.com/wp-content/uploads/2025/01/keizersgrachtreguliersgrachtamsterdam.jpg",
-  ];
-
-  const events = [ // Idealmente esto iría en una base de datos o en un archivo JSON
-    {
-      id: 1,
-      image: "https://placehold.co/600x400",
-      title: "Concierto de Rock",
-      location: "Teatro Caupolicán - Santiago Centro",
-      date: "15 de Abril, 2025",
-      time: "8:00 PM",
-    },
-    {
-      id: 2,
-      image: "https://placehold.co/600x400",
-      title: "Feria de Tecnología",
-      location: "Espacio Riesco - Huechuraba",
-      date: "20 de Abril, 2025",
-      time: "10:00 AM",
-    },
-    {
-      id: 3,
-      image: "https://placehold.co/600x400",
-      title: "Festival de Cine",
-      location: "Cinepolis La Reina - La Reina",
-      date: "25 de Abril, 2025",
-      time: "6:00 PM",
-    },
-    {
-      id: 4,
-      image: "https://placehold.co/600x400",
-      title: "Exposición de Arte",
-      location: "Parque Bustamante - Providencia",
-      date: "30 de Abril, 2025",
-      time: "4:00 PM",
-    },
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -113,29 +80,7 @@ export default function Page() {
       </div>
 
       {/* Lista de eventos */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {events.map((event) => (
-            <div
-              key={event.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden"
-            >
-              <img
-                src={event.image}
-                alt={event.title}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4">
-                <p className="text-sm text-gray-500">{event.location}</p>
-                <h3 className="text-lg text-black font-bold">{event.title}</h3>
-                <p className="text-sm text-gray-500">
-                  {event.date} - {event.time}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <EventList events={events} />
     </div>
   );
 }
