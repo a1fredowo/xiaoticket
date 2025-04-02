@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function Header() {
     return (
-      <header className="bg-gray-900 p-3 flex justify-between items-center shadow-2xl">
+      <header className="bg-gray-900 p-4 flex justify-between items-center shadow-2xl">
         <div className="flex items-center space-x-8">
           <h1 className="text-3xl font-extrabold">XiaoTicket</h1>
           <nav className="flex space-x-6">
