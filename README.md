@@ -1,1 +1,3 @@
-# xiaoticket
+# XiaoTicket
+
+Este proyecto consiste en una plataforma para la compra, reventa y transferencia segura de entradas para eventos y conciertos, con validación mediante códigos QR y asociación a la identidad del usuario. Permite la reventa y transferencia de tickets sin riesgos de fraude. Ofrece check-in en tiempo real para evitar accesos duplicados y alertas de aforo a organizadores. Incluye cupones y vouchers canjeables dentro del evento. Mejora la seguridad y experiencia del usuario en la gestión de entradas.
