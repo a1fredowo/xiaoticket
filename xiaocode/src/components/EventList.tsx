@@ -1,6 +1,12 @@
 import React from "react";
 import Link from "next/link";
 
+interface Package {
+  type: string;
+  price: number;
+  available: number;
+}
+
 interface Event {
   id: number;
   image: string;
@@ -8,6 +14,7 @@ interface Event {
   location: string;
   date: string;
   time: string;
+  packages: Package[];
 }
 
 interface EventListProps {
@@ -35,6 +42,9 @@ const EventList: React.FC<EventListProps> = ({ events }) => {
                 <h3 className="text-lg font-bold text-black">{event.title}</h3>
                 <p className="text-sm text-gray-500">
                   {event.date} - {event.time}
+                </p>
+                <p className="text-sm text-gray-700 font-semibold">
+                  Desde ${Math.min(...event.packages.map((pkg) => pkg.price))} CLP
                 </p>
               </div>
             </div>

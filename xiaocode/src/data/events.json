@@ -1,34 +1,51 @@
 [
-    {
-      "id": 1,
-      "image": "https://placehold.co/600x400",
-      "title": "Concierto de Rock",
-      "location": "Teatro Caupolicán - Santiago Centro",
-      "date": "15 de Abril, 2025",
-      "time": "8:00 PM"
-    },
-    {
-      "id": 2,
-      "image": "https://placehold.co/600x400",
-      "title": "Feria de Tecnología",
-      "location": "Espacio Riesco - Huechuraba",
-      "date": "20 de Abril, 2025",
-      "time": "10:00 AM"
-    },
-    {
-      "id": 3,
-      "image": "https://placehold.co/600x400",
-      "title": "Festival de Cine",
-      "location": "Cinepolis La Reina - La Reina",
-      "date": "25 de Abril, 2025",
-      "time": "6:00 PM"
-    },
-    {
-      "id": 4,
-      "image": "https://placehold.co/600x400",
-      "title": "Exposición de Arte",
-      "location": "Parque Bustamante - Providencia",
-      "date": "30 de Abril, 2025",
-      "time": "4:00 PM"
-    }
-  ]
+  {
+    "id": 1,
+    "image": "https://placehold.co/600x400",
+    "title": "Concierto de Rock",
+    "location": "Teatro Caupolicán - Santiago Centro",
+    "date": "15 de Abril, 2025",
+    "time": "8:00 PM",
+    "packages": [
+      { "type": "General", "price": 5000, "available": 1000 },
+      { "type": "VIP", "price": 12000, "available": 500 },
+      { "type": "Platino", "price": 20000, "available": 200 }
+    ]
+  },
+  {
+    "id": 2,
+    "image": "https://placehold.co/600x400",
+    "title": "Feria de Tecnología",
+    "location": "Espacio Riesco - Huechuraba",
+    "date": "20 de Abril, 2025",
+    "time": "10:00 AM",
+    "packages": [
+      { "type": "Entrada General", "price": 30000, "available": 200 },
+      { "type": "Entrada VIP", "price": 80000, "available": 50 }
+    ]
+  },
+  {
+    "id": 3,
+    "image": "https://placehold.co/600x400",
+    "title": "Festival de Cine",
+    "location": "Cinepolis La Reina - La Reina",
+    "date": "25 de Abril, 2025",
+    "time": "6:00 PM",
+    "packages": [
+      { "type": "Entrada General", "price": 1500, "available": 150 },
+      { "type": "Entrada Premium", "price": 4000, "available": 30 }
+    ]
+  },
+  {
+    "id": 4,
+    "image": "https://placehold.co/600x400",
+    "title": "Exposición de Arte",
+    "location": "Parque Bustamante - Providencia",
+    "date": "30 de Abril, 2025",
+    "time": "4:00 PM",
+    "packages": [
+      { "type": "Entrada General", "price": 1000, "available": 300 },
+      { "type": "Entrada VIP", "price": 2500, "available": 100 }
+    ]
+  }
+]
