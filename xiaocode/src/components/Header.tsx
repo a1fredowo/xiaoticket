@@ -12,8 +12,8 @@ export default function Header() {
             <Link href="/eventos" className="text-slate-300 rounded-lg hover:bg-blue-400 hover:text-black px-3 py-2 transition">
               Eventos
             </Link>
-            <Link href="#" className="text-slate-300 rounded-lg hover:bg-blue-400 hover:text-black px-3 py-2 transition">
-              Explorar
+            <Link href="/publicar" className="text-slate-300 rounded-lg hover:bg-blue-400 hover:text-black px-3 py-2 transition">
+              Publicar
             </Link>
             <Link href="#" className="text-slate-300 rounded-lg hover:bg-blue-400 hover:text-black px-3 py-2 transition">
               Blog
