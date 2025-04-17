@@ -8,6 +8,8 @@ export default function EventPage() {
   const { id } = useParams(); // Obtener el ID del evento desde la URL
   const event = typeof id === "string" ? events.find((event) => event.id === parseInt(id)) : null; // Buscar el evento por ID
   const [selectedPackage, setSelectedPackage] = useState(event?.packages[0]); // Paquete seleccionado
+  const [showPaymentModal, setShowPaymentModal] = useState(false); // Estado para mostrar el modal de pago
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(""); // Método de pago seleccionado
 
   if (!event) {
     return (
@@ -20,6 +22,15 @@ export default function EventPage() {
       </div>
     );
   }
+
+  const handlePurchase = () => {
+    setShowPaymentModal(true); // Mostrar el modal de pago
+  };
+
+  const handlePayment = () => {
+    alert(`Pago realizado con ${selectedPaymentMethod} para el paquete ${selectedPackage?.type}`);
+    setShowPaymentModal(false); // Cerrar el modal después del pago
+  };
 
   return (
     <div>
@@ -56,12 +67,54 @@ export default function EventPage() {
                 ))}
               </select>
             </div>
-            <button className="mt-6 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+            <button
+              onClick={handlePurchase}
+              className="mt-6 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+            >
               Comprar {selectedPackage?.type} por ${selectedPackage?.price} CLP
             </button>
           </div>
         </div>
       </div>
+
+      {/* Modal de Pago */}
+      {showPaymentModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-xl font-bold mb-4">Selecciona un método de pago</h2>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Métodos de Pago:
+              </label>
+              <select
+                value={selectedPaymentMethod}
+                onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg"
+              >
+                <option value="">Selecciona un método</option>
+                <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
+                <option value="PayPal">PayPal</option>
+                <option value="Transferencia Bancaria">Transferencia Bancaria</option>
+              </select>
+            </div>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowPaymentModal(false)}
+                className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 transition"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handlePayment}
+                disabled={!selectedPaymentMethod}
+                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+              >
+                Pagar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
