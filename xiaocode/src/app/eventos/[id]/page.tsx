@@ -64,22 +64,38 @@ export default function EventPage() {
                     <div>
                       <p className="font-medium">{pkg.type}</p>
                       <p className="text-gray-600">${pkg.price} CLP</p>
+                      <p
+                        className={`text-sm font-medium ${
+                          pkg.available > 0 ? "text-green-600" : "text-red-600"
+                        }`}
+                      >
+                        {pkg.available > 0 ? "En stock" : "Agotado"}
+                      </p>
                     </div>
                     <div className="flex items-center space-x-2">
                       <select
                         onChange={(e) => setSelectedQuantity(parseInt(e.target.value))}
                         className="border border-gray-300 rounded-lg px-2 py-1"
+                        disabled={pkg.available === 0}
                       >
                         <option value="0">Cantidad: 0</option>
-                        <option value="1">Cantidad: 1</option>
-                        <option value="2">Cantidad: 2</option>
-                        <option value="3">Cantidad: 3</option>
-                        <option value="4">Cantidad: 4</option>
-                        <option value="5">Cantidad: 5</option>
+                        {Array.from(
+                          { length: Math.min(pkg.available || 0, 5) }, // Asegura que `pkg.available` sea válido
+                          (_, i) => (
+                            <option key={i + 1} value={i + 1}>
+                              Cantidad: {i + 1}
+                            </option>
+                          )
+                        )}
                       </select>
                       <button
                         onClick={() => handlePurchase(pkg)}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                        className={`px-4 py-2 rounded-lg transition ${
+                          pkg.available > 0
+                            ? "bg-blue-500 text-white hover:bg-blue-600"
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        }`}
+                        disabled={pkg.available === 0}
                       >
                         Comprar
                       </button>
