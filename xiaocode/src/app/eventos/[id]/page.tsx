@@ -10,6 +10,7 @@ export default function EventPage() {
   const [showPaymentModal, setShowPaymentModal] = useState(false); // Estado para mostrar el modal de pago
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(""); // Método de pago seleccionado
   const [selectedPackage, setSelectedPackage] = useState(null); // Paquete seleccionado para el pago
+  const [selectedQuantity, setSelectedQuantity] = useState(0); // Cantidad de entradas seleccionadas
 
   if (!event) {
     return (
@@ -24,12 +25,18 @@ export default function EventPage() {
   }
 
   const handlePurchase = (pkg) => {
-    setSelectedPackage(pkg); // Establecer el paquete seleccionado
-    setShowPaymentModal(true); // Mostrar el modal de pago
+    if (selectedQuantity > 0) {
+      setSelectedPackage(pkg); // Establecer el paquete seleccionado
+      setShowPaymentModal(true); // Mostrar el modal de pago
+    } else {
+      alert("Por favor, selecciona una cantidad de entradas.");
+    }
   };
 
   const handlePayment = () => {
-    alert(`Pago realizado con ${selectedPaymentMethod} para el paquete ${selectedPackage?.type}`);
+    alert(
+      `Pago realizado con ${selectedPaymentMethod} para el paquete ${selectedPackage?.type} con ${selectedQuantity} entradas.`
+    );
     setShowPaymentModal(false); // Cerrar el modal después del pago
   };
 
@@ -58,12 +65,25 @@ export default function EventPage() {
                       <p className="font-medium">{pkg.type}</p>
                       <p className="text-gray-600">${pkg.price} CLP</p>
                     </div>
-                    <button
-                      onClick={() => handlePurchase(pkg)}
-                      className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-                    >
-                      Comprar
-                    </button>
+                    <div className="flex items-center space-x-2">
+                      <select
+                        onChange={(e) => setSelectedQuantity(parseInt(e.target.value))}
+                        className="border border-gray-300 rounded-lg px-2 py-1"
+                      >
+                        <option value="0">Cantidad: 0</option>
+                        <option value="1">Cantidad: 1</option>
+                        <option value="2">Cantidad: 2</option>
+                        <option value="3">Cantidad: 3</option>
+                        <option value="4">Cantidad: 4</option>
+                        <option value="5">Cantidad: 5</option>
+                      </select>
+                      <button
+                        onClick={() => handlePurchase(pkg)}
+                        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                      >
+                        Comprar
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>
