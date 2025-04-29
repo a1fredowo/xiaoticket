@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Header from "@/components/Header";
-import EventList from "@/components/EventList"; // Importar el nuevo componente
-import events from "@/data/events.json"; // Importar los datos desde el archivo JSON
+import EventList from "@/components/EventList"; // Importar el componente EventList
+import Footer from "@/components/Footer"; // Importar el Footer
 
 export default function App() {
   const images = [
@@ -80,7 +80,10 @@ export default function App() {
       </div>
 
       {/* Lista de eventos */}
-      <EventList events={events} />
+      <EventList />
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

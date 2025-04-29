@@ -1,16 +1,51 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import events from "@/data/events.json"; // Importar los datos de eventos
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export default function EventPage() {
-  const { id } = useParams(); // Obtener el ID del evento desde la URL
-  const event = typeof id === "string" ? events.find((event) => event.id === parseInt(id)) : null; // Buscar el evento por ID
+  const { id } = useParams(); // Obtener la ID del evento desde la URL
+  const [event, setEvent] = useState(null); // Estado para almacenar el evento
+  const [isLoading, setIsLoading] = useState(true); // Estado para manejar el spinner de carga
   const [showPaymentModal, setShowPaymentModal] = useState(false); // Estado para mostrar el modal de pago
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(""); // Método de pago seleccionado
   const [selectedPackage, setSelectedPackage] = useState(null); // Paquete seleccionado para el pago
   const [selectedQuantity, setSelectedQuantity] = useState(0); // Cantidad de entradas seleccionadas
+
+  // Obtener el evento desde la API
+  useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        setIsLoading(true); // Mostrar el spinner mientras se realiza la solicitud
+        const response = await fetch(`/api/eventos/${id}`); // Llamar a la API con la ID
+        if (response.ok) {
+          const data = await response.json();
+          setEvent(data); // Guardar el evento en el estado
+        } else {
+          console.error("Error al obtener el evento:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error al conectar con la API:", error);
+      } finally {
+        setIsLoading(false); // Ocultar el spinner después de la solicitud
+      }
+    };
+
+    fetchEvent();
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <div>
+        <Header />
+        <div className="flex justify-center items-center h-screen">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!event) {
     return (
@@ -20,6 +55,7 @@ export default function EventPage() {
           <h1 className="text-2xl font-bold">Evento no encontrado</h1>
           <p>El evento que buscas no existe o ha sido eliminado.</p>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -112,15 +148,15 @@ export default function EventPage() {
       {showPaymentModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 className="text-xl font-bold mb-4">Selecciona un método de pago</h2>
+            <h2 className="text-xl font-bold mb-4 text-black">Selecciona un método de pago</h2>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-black">
                 Métodos de Pago:
               </label>
               <select
                 value={selectedPaymentMethod}
                 onChange={(e) => setSelectedPaymentMethod(e.target.value)}
-                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg"
+                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg text-black"
               >
                 <option value="">Selecciona un método</option>
                 <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
@@ -131,7 +167,7 @@ export default function EventPage() {
             <div className="flex justify-end space-x-4">
               <button
                 onClick={() => setShowPaymentModal(false)}
-                className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 transition"
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
               >
                 Cancelar
               </button>
@@ -146,6 +182,7 @@ export default function EventPage() {
           </div>
         </div>
       )}
+      <Footer />
     </div>
   );
 }

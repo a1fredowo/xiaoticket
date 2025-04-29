@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
 interface Package {
@@ -8,7 +9,7 @@ interface Package {
 }
 
 interface Event {
-  id: number;
+  id: string; // Usar la ID generada automáticamente
   image: string;
   title: string;
   location: string;
@@ -17,18 +18,30 @@ interface Event {
   packages: Package[];
 }
 
-interface EventListProps {
-  events: Event[];
-}
+export default function EventList() {
+  const [events, setEvents] = useState<Event[]>([]);
 
-const EventList: React.FC<EventListProps> = ({ events }) => {
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch("/api/eventos");
+        const data = await response.json();
+        setEvents(data);
+      } catch (error) {
+        console.error("Error al obtener los eventos:", error);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {events.map((event) => (
           <Link
             key={event.id}
-            href={`/eventos/${event.id}`}
+            href={`/eventos/${event.id}`} // Usar la ID generada automáticamente
             className="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl hover:scale-105 transition-transform duration-300 ease-in-out"
           >
             <div>
@@ -53,6 +66,4 @@ const EventList: React.FC<EventListProps> = ({ events }) => {
       </div>
     </div>
   );
-};
-
-export default EventList;
+}

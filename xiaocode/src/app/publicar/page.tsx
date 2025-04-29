@@ -1,8 +1,10 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import events from "@/data/events.json"; // Importar los eventos existentes
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export default function PublicarEvento() {
   const [title, setTitle] = useState("");
@@ -11,6 +13,7 @@ export default function PublicarEvento() {
   const [time, setTime] = useState("");
   const [image, setImage] = useState("");
   const [packages, setPackages] = useState([{ type: "", price: 0, available: 0 }]);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleAddPackage = () => {
@@ -23,36 +26,53 @@ export default function PublicarEvento() {
     setPackages(updatedPackages);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    // Crear un nuevo evento
     const newEvent = {
-      id: events.length + 1, // Generar un ID único
-      image: image || "https://placehold.co/600x400", // Imagen por defecto si no se proporciona
       title,
       location,
       date,
       time,
+      image: image || "https://placehold.co/600x400",
       packages,
     };
 
-    // Simular agregar el evento al JSON (solo en memoria)
-    events.push(newEvent);
-    alert("Evento publicado exitosamente!");
+    try {
+      const response = await fetch("/api/eventos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newEvent),
+      });
 
-    // Redirigir a la lista de eventos
-    router.push("/eventos");
+      if (response.ok) {
+        toast.success("¡Evento publicado exitosamente!"); // Toast de éxito
+        setTimeout(() => {
+          router.push("/eventos");
+        }, 2000);
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.error || "Error al publicar el evento"); // Toast de error
+      }
+    } catch (error) {
+      toast.error("Error al conectar con el servidor"); // Toast de error
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div>
       <Header />
+      <ToastContainer /> {/* Contenedor de toasts */}
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-center mb-6">Publicar Nuevo Evento</h1>
+        <h1 className="text-2xl font-bold text-center mb-6 text-black">Publicar Nuevo Evento</h1>
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
           <div className="mb-4">
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="title" className="block text-sm font-medium text-black">
               Título del Evento
             </label>
             <input
@@ -60,12 +80,13 @@ export default function PublicarEvento() {
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg text-black placeholder:text-gray-700"
+              placeholder="Ingresa el título del evento"
               required
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="location" className="block text-sm font-medium text-black">
               Ubicación
             </label>
             <input
@@ -73,12 +94,13 @@ export default function PublicarEvento() {
               id="location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg text-black placeholder:text-gray-700"
+              placeholder="Ingresa la ubicación"
               required
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="date" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="date" className="block text-sm font-medium text-black">
               Fecha
             </label>
             <input
@@ -86,12 +108,12 @@ export default function PublicarEvento() {
               id="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg text-black"
               required
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="time" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="time" className="block text-sm font-medium text-black">
               Hora
             </label>
             <input
@@ -99,12 +121,12 @@ export default function PublicarEvento() {
               id="time"
               value={time}
               onChange={(e) => setTime(e.target.value)}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg text-black"
               required
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="image" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="image" className="block text-sm font-medium text-black">
               URL de la Imagen
             </label>
             <input
@@ -112,11 +134,12 @@ export default function PublicarEvento() {
               id="image"
               value={image}
               onChange={(e) => setImage(e.target.value)}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg text-black placeholder:text-gray-700"
+              placeholder="Ingresa la URL de la imagen"
             />
           </div>
           <div className="mb-4">
-            <h3 className="text-lg font-medium text-gray-700">Paquetes</h3>
+            <h3 className="text-lg font-medium text-black">Paquetes</h3>
             {packages.map((pkg, index) => (
               <div key={index} className="flex space-x-4 mt-2">
                 <input
@@ -124,7 +147,7 @@ export default function PublicarEvento() {
                   placeholder="Tipo"
                   value={pkg.type}
                   onChange={(e) => handlePackageChange(index, "type", e.target.value)}
-                  className="block w-1/3 px-4 py-2 border border-gray-300 rounded-lg"
+                  className="block w-1/3 px-4 py-2 border border-gray-300 rounded-lg text-black placeholder:text-gray-700"
                   required
                 />
                 <input
@@ -132,7 +155,7 @@ export default function PublicarEvento() {
                   placeholder="Precio"
                   value={pkg.price}
                   onChange={(e) => handlePackageChange(index, "price", e.target.value)}
-                  className="block w-1/3 px-4 py-2 border border-gray-300 rounded-lg"
+                  className="block w-1/3 px-4 py-2 border border-gray-300 rounded-lg text-black placeholder:text-gray-700"
                   required
                 />
                 <input
@@ -140,7 +163,7 @@ export default function PublicarEvento() {
                   placeholder="Disponibles"
                   value={pkg.available}
                   onChange={(e) => handlePackageChange(index, "available", e.target.value)}
-                  className="block w-1/3 px-4 py-2 border border-gray-300 rounded-lg"
+                  className="block w-1/3 px-4 py-2 border border-gray-300 rounded-lg text-black placeholder:text-gray-700"
                   required
                 />
               </div>
@@ -161,6 +184,7 @@ export default function PublicarEvento() {
           </button>
         </form>
       </div>
+      <Footer />
     </div>
   );
 }
