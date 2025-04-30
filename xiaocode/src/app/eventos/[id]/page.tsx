@@ -1,17 +1,21 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export default function EventPage() {
   const { id } = useParams(); // Obtener la ID del evento desde la URL
+  const router = useRouter(); // Para redirigir a la página de confirmación
   const [event, setEvent] = useState(null); // Estado para almacenar el evento
   const [isLoading, setIsLoading] = useState(true); // Estado para manejar el spinner de carga
   const [showPaymentModal, setShowPaymentModal] = useState(false); // Estado para mostrar el modal de pago
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false); // Estado para mostrar el modal de confirmación
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(""); // Método de pago seleccionado
-  const [selectedPackage, setSelectedPackage] = useState(null); // Paquete seleccionado para el pago
+  const [selectedPackage, setSelectedPackage] = useState(null); // Paquete seleccionado para el modal
   const [selectedQuantity, setSelectedQuantity] = useState(0); // Cantidad de entradas seleccionadas
+  const [isProcessing, setIsProcessing] = useState(false); // Estado para manejar la lógica de compra
 
   // Obtener el evento desde la API
   useEffect(() => {
@@ -63,16 +67,50 @@ export default function EventPage() {
   const handlePurchase = (pkg) => {
     if (selectedQuantity > 0) {
       setSelectedPackage(pkg); // Establecer el paquete seleccionado
-      setShowPaymentModal(true); // Mostrar el modal de pago
+      setShowConfirmationModal(true); // Mostrar el modal de confirmación
     } else {
-      alert("Por favor, selecciona una cantidad de entradas.");
+      toast.error("Por favor, selecciona una cantidad de entradas.");
+    }
+  };
+
+  const confirmPurchase = async () => {
+    setIsProcessing(true); // Mostrar estado de procesamiento
+    try {
+      // Simular lógica de compra (puedes reemplazar esto con una llamada a la API)
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulación de espera
+      toast.success("Compra realizada exitosamente.");
+      setShowConfirmationModal(false); // Cerrar el modal de confirmación
+      setShowPaymentModal(true); // Abrir el modal de pago
+    } catch (error) {
+      toast.error("Error al realizar la compra. Inténtalo nuevamente.");
+    } finally {
+      setIsProcessing(false); // Finalizar estado de procesamiento
     }
   };
 
   const handlePayment = () => {
-    alert(
-      `Pago realizado con ${selectedPaymentMethod} para el paquete ${selectedPackage?.type} con ${selectedQuantity} entradas.`
-    );
+    if (!selectedPaymentMethod) {
+      toast.error("Por favor, selecciona un método de pago.");
+      return;
+    }
+
+    // Datos de confirmación
+    const confirmationData = {
+      eventId: event.id,
+      eventName: event.title,
+      package: selectedPackage?.type,
+      quantity: selectedQuantity,
+      buyer: localStorage.getItem("user") || "Usuario Anónimo",
+    };
+
+    // Construir la URL con los datos de confirmación como query string
+    const queryString = new URLSearchParams({
+      data: JSON.stringify(confirmationData),
+    }).toString();
+
+    // Redirigir a la página de confirmación
+    router.push(`/eventos/${event.id}/confirmacion?${queryString}`);
+
     setShowPaymentModal(false); // Cerrar el modal después del pago
   };
 
@@ -143,6 +181,43 @@ export default function EventPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal de Confirmación */}
+      {showConfirmationModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-xl font-bold mb-4 text-black">Confirmar Compra</h2>
+            <p className="text-black">
+              <strong>Paquete:</strong> {selectedPackage.type}
+            </p>
+            <p className="text-black">
+              <strong>Precio:</strong> ${selectedPackage.price} CLP
+            </p>
+            <p className="text-black">
+              <strong>Cantidad:</strong> {selectedQuantity}
+            </p>
+            <div className="flex justify-end space-x-4 mt-4">
+              <button
+                onClick={() => setShowConfirmationModal(false)}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmPurchase}
+                disabled={isProcessing}
+                className={`px-4 py-2 rounded-lg transition ${
+                  isProcessing
+                    ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+                    : "bg-green-500 text-white hover:bg-green-600"
+                }`}
+              >
+                {isProcessing ? "Procesando..." : "Confirmar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal de Pago */}
       {showPaymentModal && (
