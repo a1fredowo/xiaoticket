@@ -206,13 +206,16 @@ export default function EventPage() {
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
             <h2 className="text-xl font-bold mb-4 text-black">Confirmar Compra</h2>
             <p className="text-black">
-              <strong>Nombre:</strong> {buyerData?.name}
+              <strong>Nombre:</strong> {buyerData?.firstName} {buyerData?.lastName}
             </p>
             <p className="text-black">
               <strong>Correo:</strong> {buyerData?.email}
             </p>
             <p className="text-black">
               <strong>RUT:</strong> {buyerData?.idNumber}
+            </p>
+            <p className="text-black">
+              <strong>Dirección de Facturación:</strong> {buyerData?.billingAddress}
             </p>
             <p className="text-black">
               <strong>Paquete:</strong> {selectedPackage?.type}
