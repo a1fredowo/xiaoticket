@@ -4,17 +4,20 @@ import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import BuyerForm from "@/components/BuyerForm"; // Importar el formulario del comprador
 
 export default function EventPage() {
   const { id } = useParams(); // Obtener la ID del evento desde la URL
   const router = useRouter(); // Para redirigir a la página de confirmación
   const [event, setEvent] = useState(null); // Estado para almacenar el evento
   const [isLoading, setIsLoading] = useState(true); // Estado para manejar el spinner de carga
-  const [showPaymentModal, setShowPaymentModal] = useState(false); // Estado para mostrar el modal de pago
+  const [showBuyerFormModal, setShowBuyerFormModal] = useState(false); // Estado para mostrar el modal del formulario
   const [showConfirmationModal, setShowConfirmationModal] = useState(false); // Estado para mostrar el modal de confirmación
+  const [showPaymentModal, setShowPaymentModal] = useState(false); // Estado para mostrar el modal de pago
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(""); // Método de pago seleccionado
   const [selectedPackage, setSelectedPackage] = useState(null); // Paquete seleccionado para el modal
   const [selectedQuantity, setSelectedQuantity] = useState(0); // Cantidad de entradas seleccionadas
+  const [buyerData, setBuyerData] = useState(null); // Datos del comprador
   const [isProcessing, setIsProcessing] = useState(false); // Estado para manejar la lógica de compra
 
   // Obtener el evento desde la API
@@ -67,7 +70,7 @@ export default function EventPage() {
   const handlePurchase = (pkg) => {
     if (selectedQuantity > 0) {
       setSelectedPackage(pkg); // Establecer el paquete seleccionado
-      setShowConfirmationModal(true); // Mostrar el modal de confirmación
+      setShowBuyerFormModal(true); // Mostrar el modal del formulario
     } else {
       toast.error("Por favor, selecciona una cantidad de entradas.");
     }
@@ -100,7 +103,7 @@ export default function EventPage() {
       eventName: event.title,
       package: selectedPackage?.type,
       quantity: selectedQuantity,
-      buyer: localStorage.getItem("user") || "Usuario Anónimo",
+      buyer: buyerData?.name || "Usuario Anónimo",
     };
 
     // Construir la URL con los datos de confirmación como query string
@@ -182,16 +185,40 @@ export default function EventPage() {
         </div>
       </div>
 
+      {/* Modal del Formulario del Comprador */}
+      {showBuyerFormModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <BuyerForm
+              onSubmit={(data) => {
+                setBuyerData(data); // Guardar los datos del comprador
+                setShowBuyerFormModal(false); // Cerrar el modal del formulario
+                setShowConfirmationModal(true); // Mostrar el modal de confirmación
+              }}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Modal de Confirmación */}
       {showConfirmationModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
             <h2 className="text-xl font-bold mb-4 text-black">Confirmar Compra</h2>
             <p className="text-black">
-              <strong>Paquete:</strong> {selectedPackage.type}
+              <strong>Nombre:</strong> {buyerData?.name}
             </p>
             <p className="text-black">
-              <strong>Precio:</strong> ${selectedPackage.price} CLP
+              <strong>Correo:</strong> {buyerData?.email}
+            </p>
+            <p className="text-black">
+              <strong>RUT:</strong> {buyerData?.idNumber}
+            </p>
+            <p className="text-black">
+              <strong>Paquete:</strong> {selectedPackage?.type}
+            </p>
+            <p className="text-black">
+              <strong>Precio:</strong> ${selectedPackage?.price} CLP
             </p>
             <p className="text-black">
               <strong>Cantidad:</strong> {selectedQuantity}
