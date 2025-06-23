@@ -77,17 +77,30 @@ export default function EventPage() {
   };
 
   const confirmPurchase = async () => {
-    setIsProcessing(true); // Mostrar estado de procesamiento
+    setIsProcessing(true);
     try {
-      // Simular lógica de compra (puedes reemplazar esto con una llamada a la API)
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulación de espera
+      // Guardar la venta en la base de datos
+      await fetch("/api/ventas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventId: event.id,
+          packageType: selectedPackage.type,
+          quantity: selectedQuantity,
+          rut: buyerData.idNumber,
+          buyerName: `${buyerData.firstName} ${buyerData.lastName}`,
+          email: buyerData.email,
+          billingAddress: buyerData.billingAddress,
+        }),
+      });
+
       toast.success("Compra realizada exitosamente.");
-      setShowConfirmationModal(false); // Cerrar el modal de confirmación
-      setShowPaymentModal(true); // Abrir el modal de pago
+      setShowConfirmationModal(false);
+      setShowPaymentModal(true);
     } catch (error) {
-      toast.error("Error al realizar la compra. Inténtalo nuevamente.");
+      toast.error("Error al registrar la venta.");
     } finally {
-      setIsProcessing(false); // Finalizar estado de procesamiento
+      setIsProcessing(false);
     }
   };
 
@@ -103,7 +116,10 @@ export default function EventPage() {
       eventName: event.title,
       package: selectedPackage?.type,
       quantity: selectedQuantity,
-      buyer: buyerData?.name || "Usuario Anónimo",
+      buyer: `${buyerData?.firstName} ${buyerData?.lastName}`,
+      rut: buyerData?.idNumber,
+      email: buyerData?.email,
+      billingAddress: buyerData?.billingAddress,
     };
 
     // Construir la URL con los datos de confirmación como query string

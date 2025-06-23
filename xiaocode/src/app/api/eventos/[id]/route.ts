@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import clientPromise from "@/utils/mongodb";
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, context: Promise<{ params: { id: string } }>) {
+  const { params } = await context;
+  const { id } = params;
   const client = await clientPromise;
   const db = client.db();
 
   try {
     // Buscar el evento en la base de datos por su ID
-    const event = await db.collection("events").findOne({ id: params.id });
+    const event = await db.collection("events").findOne({ id });
 
     if (!event) {
       return NextResponse.json({ error: "Evento no encontrado" }, { status: 404 });

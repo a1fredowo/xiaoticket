@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import clientPromise from "@/utils/mongodb"; // Ruta corregida
+import clientPromise from "@/utils/mongodb";
 import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   const client = await clientPromise;
   const db = client.db();
 
-  // Verifica si el usuario ya existe
+  // Verifica si el usuario ya existe por el email en texto plano
   const existingUser = await db.collection("users").findOne({ email });
   if (existingUser) {
     return NextResponse.json({ error: "El usuario ya existe" }, { status: 409 });
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  // Guarda el usuario
+  // Guarda el usuario con el email en texto plano
   await db.collection("users").insertOne({
     email,
     password: hashedPassword

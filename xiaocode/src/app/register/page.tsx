@@ -6,17 +6,82 @@ import Spinner from "@/components/Spinner";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // Estado para el spinner
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  // Validaciones
+  const isValidEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const isStrongPassword = (password: string) =>
+    /^(?=.*[0-9]).{8,}$/.test(password);
+
+  // Validación en tiempo real para email
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    if (!isValidEmail(value)) {
+      setEmailError("El correo electrónico no es válido.");
+    } else {
+      setEmailError("");
+    }
+  };
+
+  // Validación en tiempo real para contraseña
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPassword(value);
+    if (!isStrongPassword(value)) {
+      setPasswordError("La contraseña debe tener al menos 8 caracteres y contener al menos un número.");
+    } else {
+      setPasswordError("");
+    }
+    // También valida confirmación si ya hay valor
+    if (confirmPassword && value !== confirmPassword) {
+      setConfirmPasswordError("Las contraseñas no coinciden.");
+    } else {
+      setConfirmPasswordError("");
+    }
+  };
+
+  // Validación en tiempo real para confirmación de contraseña
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setConfirmPassword(value);
+    if (password !== value) {
+      setConfirmPasswordError("Las contraseñas no coinciden.");
+    } else {
+      setConfirmPasswordError("");
+    }
+  };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
-    setIsLoading(true); // Mostrar el spinner
+
+    // Validación final antes de enviar
+    if (!isValidEmail(email)) {
+      setEmailError("El correo electrónico no es válido.");
+      return;
+    }
+    if (!isStrongPassword(password)) {
+      setPasswordError("La contraseña debe tener al menos 8 caracteres y contener al menos un número.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setConfirmPasswordError("Las contraseñas no coinciden.");
+      return;
+    }
+
+    setIsLoading(true);
 
     try {
       const response = await fetch("/api/register", {
@@ -31,8 +96,9 @@ export default function RegisterPage() {
         setSuccess("Usuario registrado exitosamente");
         setEmail("");
         setPassword("");
+        setConfirmPassword("");
         setTimeout(() => {
-          router.push("/login"); // Redirigir a la página de login
+          router.push("/login");
         }, 2000);
       } else {
         const data = await response.json();
@@ -41,13 +107,13 @@ export default function RegisterPage() {
     } catch (err) {
       setError("Error al conectar con el servidor");
     } finally {
-      setIsLoading(false); // Ocultar el spinner
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-900">
-      {isLoading && <Spinner />} {/* Mostrar el spinner si isLoading es true */}
+      {isLoading && <Spinner />}
       <div className="bg-gray-800 p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold mb-6 text-center text-white">Crear Cuenta</h1>
         <form onSubmit={handleRegister}>
@@ -55,11 +121,12 @@ export default function RegisterPage() {
             <label htmlFor="email" className="block text-sm font-medium text-gray-300">
               Correo Electrónico
             </label>
+            {emailError && <p className="text-red-500 text-xs mb-1">{emailError}</p>}
             <input
               type="email"
               id="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
               className="mt-1 block w-full px-4 py-2 border border-gray-600 rounded-lg shadow-sm bg-gray-700 text-gray-300 focus:ring-blue-500 focus:border-blue-500"
               required
             />
@@ -68,13 +135,34 @@ export default function RegisterPage() {
             <label htmlFor="password" className="block text-sm font-medium text-gray-300">
               Contraseña
             </label>
+            {passwordError && <p className="text-red-500 text-xs mb-1">{passwordError}</p>}
             <input
               type="password"
               id="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
               className="mt-1 block w-full px-4 py-2 border border-gray-600 rounded-lg shadow-sm bg-gray-700 text-gray-300 focus:ring-blue-500 focus:border-blue-500"
               required
+              minLength={8}
+              pattern="^(?=.*[0-9]).{8,}$"
+              title="Al menos 8 caracteres y un número"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300">
+              Confirmar Contraseña
+            </label>
+            {confirmPasswordError && <p className="text-red-500 text-xs mb-1">{confirmPasswordError}</p>}
+            <input
+              type="password"
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={handleConfirmPasswordChange}
+              className="mt-1 block w-full px-4 py-2 border border-gray-600 rounded-lg shadow-sm bg-gray-700 text-gray-300 focus:ring-blue-500 focus:border-blue-500"
+              required
+              minLength={8}
+              pattern="^(?=.*[0-9]).{8,}$"
+              title="Al menos 8 caracteres y un número"
             />
           </div>
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}

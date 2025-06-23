@@ -7,6 +7,8 @@ export async function POST(req: NextRequest) {
   const { email, password } = await req.json();
   const client = await clientPromise;
   const db = client.db();
+
+  // Busca por el email en texto plano
   const user = await db.collection("users").findOne({ email });
 
   if (!user) {
@@ -18,13 +20,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Contraseña incorrecta" }, { status: 401 });
   }
 
-  // Crea token JWT
+  // Crea token JWT con el email en texto plano
   const token = jwt.sign(
     { email: user.email, id: user._id },
     process.env.JWT_SECRET as string,
     { expiresIn: "2h" }
   );
 
-  // Puedes guardar el token en una cookie o devolverlo al frontend
   return NextResponse.json({ token });
 }
