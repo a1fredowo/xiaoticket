@@ -61,7 +61,7 @@ export default function ConfirmacionPage() {
           </button>
         </div>
       </div>
-      <Footer />
+      <Footer className="mt-auto" />
     </div>
   );
 }

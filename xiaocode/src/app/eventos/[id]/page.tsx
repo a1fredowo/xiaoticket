@@ -303,7 +303,7 @@ export default function EventPage() {
           </div>
         </div>
       )}
-      <Footer />
+      <Footer className="mt-auto" />
     </div>
   );
 }

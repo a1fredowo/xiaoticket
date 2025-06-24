@@ -32,7 +32,7 @@ export default function App() {
   };
 
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <Header />
       {/* Banner */}
       <div className="relative w-full h-[450px] overflow-hidden">
@@ -83,7 +83,7 @@ export default function App() {
       <EventList />
 
       {/* Footer */}
-      <Footer />
+      <Footer className="mt-auto" />
     </div>
   );
 }
