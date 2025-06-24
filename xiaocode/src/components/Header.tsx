@@ -66,6 +66,9 @@ export default function Header() {
           <Link href="/checkin" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
             Check-In
           </Link>
+          <Link href="/cupones" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
+            Cupones
+          </Link>
         </nav>
 
         {/* Botones de usuario */}

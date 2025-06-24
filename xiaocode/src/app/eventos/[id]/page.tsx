@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { v4 as uuidv4 } from "uuid";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BuyerForm from "@/components/BuyerForm"; // Importar el formulario del comprador
@@ -79,8 +80,7 @@ export default function EventPage() {
   const confirmPurchase = async () => {
     setIsProcessing(true);
     try {
-      // Guardar la venta en la base de datos
-      await fetch("/api/ventas", {
+      const response = await fetch("/api/ventas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -94,7 +94,33 @@ export default function EventPage() {
         }),
       });
 
-      toast.success("Compra realizada exitosamente.");
+      if (!response.ok) {
+        throw new Error("Error al registrar la venta.");
+      }
+
+      // Generar cupones con el campo email
+      const cupones = [
+        {
+          product: "Hamburguesa",
+          code: uuidv4(),
+          eventName: event.title,
+          email: buyerData.email, // <--- ASOCIA EL EMAIL
+        },
+        {
+          product: "Bebida",
+          code: uuidv4(),
+          eventName: event.title,
+          email: buyerData.email, // <--- ASOCIA EL EMAIL
+        },
+      ];
+
+      await fetch("/api/cupones", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cupones }),
+      });
+
+      toast.success("Compra realizada exitosamente. Cupones generados.");
       setShowConfirmationModal(false);
       setShowPaymentModal(true);
     } catch (error) {
