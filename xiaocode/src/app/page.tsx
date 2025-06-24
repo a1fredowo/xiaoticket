@@ -6,9 +6,10 @@ import Footer from "@/components/Footer"; // Importar el Footer
 
 export default function App() {
   const images = [
-    "https://placehold.co/1920x450",
-    "https://impact.economist.com/perspectives/sites/default/files/visa-hero-image-1920x450.jpg",
-    "https://bishopsmove.com/wp-content/uploads/2025/01/keizersgrachtreguliersgrachtamsterdam.jpg",
+    "https://aegwebprod.blob.core.windows.net/content/content_images/665/Yj1HlDnqCjVk6crnNeKvERnsI7yzJ2jAkPC6IfZV.jpg",
+    "https://static.ticketmaster.sg/images/activity/25sg_lsf_7212db8921d7bfd13149a340a8171f4a.png",
+    "https://themusicuniverse.com/wp-content/uploads/2025/06/txt4worldtour.jpg",
+    "https://cnakpop.com/cdn/shop/articles/SEOon_TWICE_TOUR.jpg?v=1749440693",
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -80,10 +81,12 @@ export default function App() {
       </div>
 
       {/* Lista de eventos */}
-      <EventList />
+      <div className="flex-grow">
+        <EventList />
+      </div>
 
       {/* Footer */}
-      <Footer className="mt-auto" />
+      <Footer />
     </div>
   );
 }

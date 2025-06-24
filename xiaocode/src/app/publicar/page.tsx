@@ -69,7 +69,7 @@ export default function PublicarEvento() {
       <Header />
       <ToastContainer /> {/* Contenedor de toasts */}
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-center mb-6 text-black">Publicar Nuevo Evento</h1>
+        <h1 className="text-2xl font-bold text-center mb-6 text-white">Publicar Nuevo Evento</h1>
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
           <div className="mb-4">
             <label htmlFor="title" className="block text-sm font-medium text-black">

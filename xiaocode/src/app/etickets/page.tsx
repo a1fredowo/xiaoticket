@@ -77,9 +77,9 @@ export default function MisTicketsPage() {
   };
 
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <Header />
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 flex-grow">
         <h1 className="text-2xl font-bold mb-6 text-white">Mis E-Tickets</h1>
         {loading ? (
           <p>Cargando...</p>
