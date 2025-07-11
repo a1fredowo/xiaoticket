@@ -4,13 +4,36 @@ import Link from "next/link";
 
 export default function Header() {
   const [user, setUser] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false); // Estado para controlar el menú desplegable
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(storedUser.split("@")[0]); // Mostrar la parte antes del "@"
-    }
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setUser(null);
+        setRole(null);
+        return;
+      }
+      try {
+        const res = await fetch("/api/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data.email.split("@")[0]);
+          setRole(data.role);
+          localStorage.setItem("role", data.role); 
+        } else {
+          setUser(null);
+          setRole(null);
+        }
+      } catch {
+        setUser(null);
+        setRole(null);
+      }
+    };
+    fetchUser();
   }, []);
 
   const handleLogout = () => {
@@ -25,9 +48,9 @@ export default function Header() {
         {/* Logo */}
         <h1 className="text-2xl font-extrabold text-white">XiaoTicket</h1>
 
-        {/* Botón hamburguesa para móviles */}
+        {/* Botón hamburguesa para <1300px */}
         <button
-          className="text-white md:hidden"
+          className="text-white xl:hidden"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           <svg
@@ -46,25 +69,29 @@ export default function Header() {
           </svg>
         </button>
 
-        {/* Menú de navegación (oculto en móviles, visible en tablets y desktop) */}
-        <nav className="hidden md:flex space-x-6">
+        {/* Menú de navegación (oculto en <1300px, visible en xl+) */}
+        <nav className="hidden xl:flex space-x-6">
           <Link href="/" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
             Inicio
           </Link>
           <Link href="/eventos" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
             Eventos
           </Link>
-          <Link href="/publicar" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
-            Crear Evento
-          </Link>
+          {role === "admin" && (
+            <>
+              <Link href="/publicar" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
+                Crear Evento
+              </Link>
+              <Link href="/checkin" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
+                Check-In
+              </Link>
+            </>
+          )}
           <Link href="/etickets" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
             Mis E-Tickets
           </Link>
           <Link href="/reventa" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
             Reventa
-          </Link>
-          <Link href="/checkin" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
-            Check-In
           </Link>
           <Link href="/cupones" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
             Cupones
@@ -72,7 +99,7 @@ export default function Header() {
         </nav>
 
         {/* Botones de usuario */}
-        <div className="hidden md:flex space-x-4">
+        <div className="hidden xl:flex space-x-4">
           {user ? (
             <div className="flex items-center space-x-4">
               <span className="text-slate-300">Hola, {user}</span>
@@ -94,20 +121,33 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Menú desplegable para móviles */}
+      {/* Menú desplegable para <1300px */}
       {isMenuOpen && (
-        <nav className="mt-4 md:hidden flex flex-col space-y-2">
+        <nav className="mt-4 xl:hidden flex flex-col space-y-2">
           <Link href="/" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
             Inicio
           </Link>
           <Link href="/eventos" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
             Eventos
           </Link>
-          <Link href="/publicar" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
-            Publicar
+          {role === "admin" && (
+            <>
+              <Link href="/publicar" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
+                Crear Evento
+              </Link>
+              <Link href="/checkin" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
+                Check-In
+              </Link>
+            </>
+          )}
+          <Link href="/etickets" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
+            Mis E-Tickets
           </Link>
-          <Link href="#" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
-            Blog
+          <Link href="/reventa" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
+            Reventa
+          </Link>
+          <Link href="/cupones" className="text-slate-300 hover:bg-blue-400 hover:text-black px-3 py-2 rounded-lg transition">
+            Cupones
           </Link>
           {user ? (
             <button

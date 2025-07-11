@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import clientPromise from "@/utils/mongodb";
 import { v4 as uuidv4 } from "uuid"; // Importar uuid para generar IDs únicas
+import { withRole } from "@/middleware/roleGuard";
 
 export async function GET() {
   const client = await clientPromise;
@@ -9,7 +10,7 @@ export async function GET() {
   return NextResponse.json(events);
 }
 
-export async function POST(req: NextRequest) {
+export const POST = withRole("admin", async (req: NextRequest) => {
   const { title, location, date, time, image, packages } = await req.json();
 
   if (!title || !location || !date || !time || !packages) {
@@ -32,4 +33,4 @@ export async function POST(req: NextRequest) {
   await db.collection("events").insertOne(newEvent);
 
   return NextResponse.json({ message: "Evento publicado exitosamente", event: newEvent }, { status: 201 });
-}
+});

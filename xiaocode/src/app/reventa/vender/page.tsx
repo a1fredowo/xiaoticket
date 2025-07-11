@@ -94,9 +94,9 @@ export default function VenderReventaPage() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <div className="container mx-auto px-4 py-8">
+      <div className="flex-1 container mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold mb-6 text-white">Vender o Transferir Tickets</h1>
         {loading ? (
           <p>Cargando...</p>

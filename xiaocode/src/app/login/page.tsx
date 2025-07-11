@@ -32,6 +32,7 @@ export default function LoginPage() {
         setSuccess("Inicio de sesión exitoso");
         localStorage.setItem("token", data.token); // Guardar el token en localStorage
         localStorage.setItem("user", email); // Guardar el email del usuario
+        localStorage.setItem("role", data.role); // Guardar el rol del usuario
         setTimeout(() => {
           router.push("/"); // Redirigir al home
         }, 2000);

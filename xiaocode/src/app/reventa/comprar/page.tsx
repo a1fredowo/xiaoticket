@@ -56,9 +56,9 @@ export default function ComprarReventaPage() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <div className="container mx-auto px-4 py-12">
+      <div className="flex-1 container mx-auto px-4 py-12">
         <h1 className="text-2xl font-bold text-center mb-8">Comprar Tickets de Reventa</h1>
         <p className="text-center mb-6 text-gray-100">
           Aquí puedes ver los tickets publicados por otros usuarios y comprarlos de forma segura.

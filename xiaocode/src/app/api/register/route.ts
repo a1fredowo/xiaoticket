@@ -25,7 +25,8 @@ export async function POST(req: NextRequest) {
   // Guarda el usuario con el email en texto plano
   await db.collection("users").insertOne({
     email,
-    password: hashedPassword
+    password: hashedPassword,
+    role: "user"
   });
 
   return NextResponse.json({ message: "Usuario registrado correctamente" }, { status: 201 });
