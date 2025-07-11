@@ -8,24 +8,22 @@ export async function POST(req: NextRequest) {
   const client = await clientPromise;
   const db = client.db();
 
-  // Busca por el email en texto plano
   const user = await db.collection("users").findOne({ email });
-  if (!user) {
-    return NextResponse.json({ error: "Usuario no encontrado" }, { status: 401 });
+  if (!user || !await bcrypt.compare(password, user.password)) {
+    return NextResponse.json({ error: "Credenciales inválidas" }, { status: 401 });
   }
 
-  // Verifica la contraseña
-  const passwordValid = await bcrypt.compare(password, user.password);
-  if (!passwordValid) {
-    return NextResponse.json({ error: "Contraseña incorrecta" }, { status: 401 });
-  }
-
-  // Crea token JWT con el email en texto plano
   const token = jwt.sign(
-    { email: user.email, role: user.role },
-    process.env.JWT_SECRET,
+    { email: user.email, role: user.role }, 
+    process.env.JWT_SECRET as string, 
     { expiresIn: "7d" }
   );
 
-  return NextResponse.json({ token });
+  return NextResponse.json({ 
+    token, 
+    user: { 
+      email: user.email, 
+      role: user.role 
+    } 
+  });
 }

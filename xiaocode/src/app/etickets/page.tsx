@@ -46,7 +46,12 @@ export default function MisTicketsPage() {
     doc.text(`Dirección: ${ticket.billingAddress}`, 20, 120);
 
     // Generar QR con los datos principales
-    const qrData = `Evento: ${ticket.eventName}, Paquete: ${ticket.packageType}, Cantidad: ${ticket.quantity}, Comprador: ${ticket.buyerName}, RUT: ${ticket.rut}`;
+    const qrData = JSON.stringify({
+      eventId: ticket.eventId,
+      packageType: ticket.packageType,
+      rut: ticket.rut,
+      buyerName: ticket.buyerName,
+    });
     const qrCodeUrl = await QRCode.toDataURL(qrData);
     doc.addImage(qrCodeUrl, "PNG", 130, 20, 50, 50);
 

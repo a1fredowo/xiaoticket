@@ -16,7 +16,12 @@ export default function ConfirmacionPage() {
     setConfirmationData(data);
 
     // Generar el QR con el RUT incluido
-    const qrData = `Evento: ${data.eventName}, Paquete: ${data.package}, Cantidad: ${data.quantity}, Comprador: ${data.buyer}, RUT: ${data.rut}`;
+    const qrData = JSON.stringify({
+      eventId: data.eventId,
+      packageType: data.packageType,
+      rut: data.rut,
+      buyerName: data.buyerName,
+    });
     QRCode.toDataURL(qrData).then((url) => setQrCodeUrl(url));
   }, [searchParams]);
 
